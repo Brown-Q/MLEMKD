@@ -282,10 +282,6 @@ class RecurrentRGCN(nn.Module):
             score_rel = self.rdecoder.forward(pre_emb, r_emb, all_triples, mode="train").view(-1, 2 * self.num_rels)
             loss_rel_quality = torch.nn.MSELoss()(torch.mul(quality_relation_score, torch.gather(score_rel, 1, all_triples[:, 1].unsqueeze(-1))), torch.mul(quality_relation_score, torch.gather(relation_pro, 1, all_triples[:, 1].unsqueeze(-1)))) * 0.1
             loss_rel_value = self.loss_e(torch.mul(value_relation_score, score_rel), torch.mul(value_relation_score, relation_pro)) * 0.000001
-            # print('------------------')
-            # print(self.loss_e(score_rel, all_triples[:, 1]))
-            # print(loss_rel_quality)
-            # print(loss_rel_value)
             loss_rel += self.loss_e(score_rel, all_triples[:, 1]) + loss_rel_quality + loss_rel_value
 
         if self.use_static:
@@ -333,9 +329,6 @@ class RecurrentRGCN(nn.Module):
             scores_ob = self.decoder_ob.forward(pre_emb, r_emb, all_triples).view(-1, self.num_ents)
             value_entity_score = value_entity_filter(torch.abs(scores_ob-entity_pro))
             loss_ent_value = self.loss_e(torch.mul(value_entity_score, scores_ob), torch.mul(value_entity_score, entity_pro)) * 0.000005
-            # print('-------------------')
-            # print(loss_ent_value)
-            # print(self.loss_e(scores_ob, all_triples[:, 2]))
             loss_ent += self.loss_e(scores_ob, all_triples[:, 2]) + loss_ent_value
             
      
@@ -343,9 +336,6 @@ class RecurrentRGCN(nn.Module):
             score_rel = self.rdecoder.forward(pre_emb, r_emb, all_triples, mode="train").view(-1, 2 * self.num_rels)
             value_relation_score = value_relation_filter(torch.abs(score_rel-relation_pro))
             loss_rel_value = self.loss_e(torch.mul(value_relation_score, score_rel), torch.mul(value_relation_score, relation_pro)) * 0.0001
-            # print('-------------------')
-            # print(loss_rel_value)
-            # print(self.loss_e(score_rel, all_triples[:, 1]))
             loss_rel += self.loss_e(score_rel, all_triples[:, 1]) + loss_rel_value
 
         if self.use_static:

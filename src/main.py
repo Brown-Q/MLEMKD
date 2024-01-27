@@ -1,8 +1,3 @@
-# @Time    : 2019-08-10 11:20
-# @Author  : Lee_zix
-# @Email   : Lee_zix@163.com
-# @File    : main.py
-# @Software: PyCharm
 """
 The entry of the KGEvolve
 """
@@ -494,12 +489,8 @@ def run_experiment(args, n_hidden=None, n_layers=None, dropout=None, n_bases=Non
         print("----------------------------------------start training----------------------------------------\n")
             # optimizer
         if args.situation == 'pretrain':
-            print("--------模型总的参数量---------")
-            print(sum(p.numel() for p in model.parameters()))  # 打印模型参数量
-
-            print("--------模型训练的参数量---------")
-            print(sum(p.numel() for p in model.parameters() if p.requires_grad))  # 打印模型参数量
-            #打印模型名称与shape
+            print(sum(p.numel() for p in model.parameters())) 
+            print(sum(p.numel() for p in model.parameters() if p.requires_grad))  
             # for name,parameters in model.named_parameters():
             #     print(name,':',parameters.size())
             train_function(epochs, model, train_list, num_nodes, num_rels, use_cuda, static_graph, optimizer, model_name, valid_list, all_ans_list_valid, all_ans_list_r_valid, model_state_file)
