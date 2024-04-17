@@ -638,9 +638,9 @@ if __name__ == '__main__':
                         help="number of minimum training epochs on each time step")
     parser.add_argument("--n-epochs_student", type=int, default=4,
                         help="number of minimum training epochs on each time step")
-    parser.add_argument("--n-epochs_stage1", type=int, default=8,
+    parser.add_argument("--n-epochs_stage1", type=int, default=30,
                         help="number of minimum training epochs on each time step")
-    parser.add_argument("--n-epochs_stage2", type=int, default=10,
+    parser.add_argument("--n-epochs_stage2", type=int, default=15,
                         help="number of minimum training epochs on each time step")
     parser.add_argument("--lr", type=float, default=0.001,
                         help="learning rate")
