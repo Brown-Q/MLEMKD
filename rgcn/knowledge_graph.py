@@ -126,8 +126,7 @@ class RGCNLinkDataset(object):
     """RGCN link prediction dataset
 
     The dataset contains a graph depicting the connectivity of a knowledge
-    base. Currently, the knowledge bases from the
-    `RGCN paper <https://arxiv.org/pdf/1703.06103.pdf>`_ supported are
+    base.
     FB15k-237, FB15k, wn18
 
     The original knowledge base is stored as an RDF file, and this class will
