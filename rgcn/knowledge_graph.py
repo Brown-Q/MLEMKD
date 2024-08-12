@@ -1,9 +1,3 @@
-""" Knowledge graph dataset for Relational-GCN
-Code adapted from authors' implementation of Relational-GCN
-https://github.com/tkipf/relational-gcn
-https://github.com/MichSchli/RelationPrediction
-"""
-
 from __future__ import absolute_import
 from __future__ import print_function
 
@@ -23,13 +17,6 @@ np.random.seed(123)
 _downlaod_prefix = _get_dgl_url('dataset/')
 
 class RGCNEntityDataset(object):
-    """RGCN Entity Classification dataset
-
-    The dataset contains a graph depicting the connectivity of a knowledge
-    base. Currently, four knowledge bases from the
-    `RGCN paper <https://arxiv.org/pdf/1703.06103.pdf>`_ are supported: aifb,
-    mutag, bgs, and am.
-
     The original knowledge base is stored as an RDF file, and this class will
     download and parse the RDF file, and performs preprocessing.
 
