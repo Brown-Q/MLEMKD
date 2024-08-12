@@ -1,9 +1,3 @@
-"""
-Utility functions for link prediction
-Most code is adapted from authors' implementation of RGCN link prediction:
-https://github.com/MichSchli/RelationPrediction
-
-"""
 import numpy as np
 import torch
 import dgl
@@ -43,7 +37,7 @@ def sort_and_rank_filter(batch_a, batch_r, score, target, all_ans):
         score[i][b_multi] = 0
         score[i][ans] = ground
     _, indices = torch.sort(score, dim=1, descending=True)  # indices : [B, number entity]
-    indices = torch.nonzero(indices == target.view(-1, 1))  # indices : [B, 2] 第一列递增， 第二列表示对应的答案实体id在每一行的位置
+    indices = torch.nonzero(indices == target.view(-1, 1))  # indices : [B, 2] 
     indices = indices[:, 1].view(-1)
     return indices
 
@@ -314,8 +308,7 @@ def split_by_time(data):
     for i in range(len(data)):
         t = data[i][3]
         train = data[i]
-        # latest_t表示读取的上一个三元组发生的时刻，要求数据集中的三元组是按照时间发生顺序排序的
-        if latest_t != t:  # 同一时刻发生的三元组
+        if latest_t != t: 
             # show snapshot
             latest_t = t
             if len(snapshot):
@@ -323,7 +316,6 @@ def split_by_time(data):
                 snapshots_num += 1
             snapshot = []
         snapshot.append(train[:3])
-    # 加入最后一个shapshot
     if len(snapshot) > 0:
         snapshot_list.append(np.array(snapshot).copy())
         snapshots_num += 1
@@ -348,7 +340,7 @@ def slide_list(snapshots, k=1):
     :param snapshots: all snapshot
     :return:
     """
-    k = k  # k=1 需要取长度k的历史，在加1长度的label
+    k = k  # k=1 
     if k > len(snapshots):
         print("ERROR: history length exceed the length of snapshot: {}>{}".format(k, len(snapshots)))
     for _ in tqdm(range(len(snapshots)-k+1)):
@@ -379,7 +371,6 @@ def construct_snap(test_triples, num_nodes, num_rels, final_score, topK):
             else:
                 predict_triples.append([index, r-num_rels, test_triples[_][0]])
 
-    # 转化为numpy array
     predict_triples = np.array(predict_triples, dtype=int)
     return predict_triples
 
@@ -403,7 +394,6 @@ def construct_snap_r(test_triples, num_nodes, num_rels, final_score, topK):
                 predict_triples.append([t, index-num_rels, h])
                 #predict_triples.append([t, index-num_rels, h])
 
-    # 转化为numpy array
     predict_triples = np.array(predict_triples, dtype=int)
     return predict_triples
 
