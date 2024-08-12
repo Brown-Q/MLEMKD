@@ -143,7 +143,7 @@ class RecurrentRGCN(nn.Module):
 
         if self.use_static:
             static_graph = static_graph.to(self.gpu)
-            static_graph.ndata['h'] = torch.cat((self.dynamic_emb, self.words_emb), dim=0)  # 演化得到的表示，和wordemb满足静态图约束
+            static_graph.ndata['h'] = torch.cat((self.dynamic_emb, self.words_emb), dim=0)  
             self.statci_rgcn_layer(static_graph, [])
             static_emb = static_graph.ndata.pop('h')[:self.num_ents, :]
             static_emb = F.normalize(static_emb) if self.layer_norm else static_emb
@@ -164,11 +164,11 @@ class RecurrentRGCN(nn.Module):
                 x_input[r_idx] = x_mean
             if i == 0:
                 x_input = torch.cat((self.emb_rel, x_input), dim=1)
-                self.h_0 = self.relation_cell_1(x_input, self.emb_rel)    # 第1层输入
+                self.h_0 = self.relation_cell_1(x_input, self.emb_rel)  
                 self.h_0 = F.normalize(self.h_0) if self.layer_norm else self.h_0
             else:
                 x_input = torch.cat((self.emb_rel, x_input), dim=1)
-                self.h_0 = self.relation_cell_1(x_input, self.h_0)  # 第2层输出==下一时刻第一层输入
+                self.h_0 = self.relation_cell_1(x_input, self.h_0) 
                 self.h_0 = F.normalize(self.h_0) if self.layer_norm else self.h_0
             current_h = self.rgcn.forward(g, self.h, [self.h_0, self.h_0])
             current_h = F.normalize(current_h) if self.layer_norm else current_h
@@ -181,7 +181,7 @@ class RecurrentRGCN(nn.Module):
     def predict(self, test_graph, num_rels, static_graph, test_triplets, use_cuda):
         with torch.no_grad():
             inverse_test_triplets = test_triplets[:, [2, 1, 0]]
-            inverse_test_triplets[:, 1] = inverse_test_triplets[:, 1] + num_rels  # 将逆关系换成逆关系的id
+            inverse_test_triplets[:, 1] = inverse_test_triplets[:, 1] + num_rels  
             all_triples = torch.cat((test_triplets, inverse_test_triplets))
             
             evolve_embs, _, r_emb, _, _ = self.forward(test_graph, static_graph, use_cuda)
