@@ -26,12 +26,12 @@ class RGCNLayer(nn.Module):
             # self.loop_weight = nn.Parameter(torch.eye(out_feat), requires_grad=False)
 
         if self.skip_connect:
-            self.skip_connect_weight = nn.Parameter(torch.Tensor(out_feat, out_feat))   # 和self-loop不一样，是跨层的计算
+            self.skip_connect_weight = nn.Parameter(torch.Tensor(out_feat, out_feat))  
             nn.init.xavier_uniform_(self.skip_connect_weight,
                                     gain=nn.init.calculate_gain('relu'))
 
             self.skip_connect_bias = nn.Parameter(torch.Tensor(out_feat))
-            nn.init.zeros_(self.skip_connect_bias)  # 初始化设置为0
+            nn.init.zeros_(self.skip_connect_bias)  
 
         if dropout:
             self.dropout = nn.Dropout(dropout)
@@ -53,21 +53,21 @@ class RGCNLayer(nn.Module):
                 loop_message = self.dropout(loop_message)
         # self.skip_connect_weight.register_hook(lambda g: print("grad of skip connect weight: {}".format(g)))
         if len(prev_h) != 0 and self.skip_connect:
-            skip_weight = F.sigmoid(torch.mm(prev_h, self.skip_connect_weight) + self.skip_connect_bias)     # 使用sigmoid，让值在0~1
+            skip_weight = F.sigmoid(torch.mm(prev_h, self.skip_connect_weight) + self.skip_connect_bias)   
             # print("skip_ weight")
             # print(skip_weight)
             # print("skip connect weight")
             # print(self.skip_connect_weight)
             # print(torch.mm(prev_h, self.skip_connect_weight))
 
-        self.propagate(g)  # 这里是在计算从周围节点传来的信息
+        self.propagate(g) 
 
         # apply bias and activation
         node_repr = g.ndata['h']
         if self.bias:
             node_repr = node_repr + self.bias
         # print(len(prev_h))
-        if len(prev_h) != 0 and self.skip_connect:   # 两次计算loop_message的方式不一样，前者激活后再加权
+        if len(prev_h) != 0 and self.skip_connect:  
             previous_node_repr = (1 - skip_weight) * prev_h
             if self.activation:
                 node_repr = self.activation(node_repr)
@@ -206,10 +206,10 @@ class UnionRGCNLayer(nn.Module):
             nn.init.xavier_uniform_(self.evolve_loop_weight, gain=nn.init.calculate_gain('relu'))
 
         if self.skip_connect:
-            self.skip_connect_weight = nn.Parameter(torch.Tensor(out_feat, out_feat))   # 和self-loop不一样，是跨层的计算
+            self.skip_connect_weight = nn.Parameter(torch.Tensor(out_feat, out_feat))  
             nn.init.xavier_uniform_(self.skip_connect_weight,gain=nn.init.calculate_gain('relu'))
             self.skip_connect_bias = nn.Parameter(torch.Tensor(out_feat))
-            nn.init.zeros_(self.skip_connect_bias)  # 初始化设置为0
+            nn.init.zeros_(self.skip_connect_bias) 
 
         if dropout:
             self.dropout = nn.Dropout(dropout)
@@ -232,14 +232,14 @@ class UnionRGCNLayer(nn.Module):
             loop_message = torch.mm(g.ndata['h'], self.evolve_loop_weight)
             loop_message[masked_index, :] = torch.mm(g.ndata['h'], self.loop_weight)[masked_index, :]
         if len(prev_h) != 0 and self.skip_connect:
-            skip_weight = F.sigmoid(torch.mm(prev_h, self.skip_connect_weight) + self.skip_connect_bias)     # 使用sigmoid，让值在0~1
+            skip_weight = F.sigmoid(torch.mm(prev_h, self.skip_connect_weight) + self.skip_connect_bias)   
 
         # calculate the neighbor message with weight_neighbor
         self.propagate(g)
         node_repr = g.ndata['h']
 
         # print(len(prev_h))
-        if len(prev_h) != 0 and self.skip_connect:  # 两次计算loop_message的方式不一样，前者激活后再加权
+        if len(prev_h) != 0 and self.skip_connect: 
             if self.self_loop:
                 node_repr = node_repr + loop_message
             node_repr = skip_weight * node_repr + (1 - skip_weight) * prev_h
@@ -268,7 +268,6 @@ class UnionRGCNLayer(nn.Module):
         # node = torch.matmul(node, self.sub)
 
         # after add inverse edges, we only use message pass when h as tail entity
-        # 这里计算的是每个节点发出的消息，节点发出消息时其作为头实体
         # msg = torch.cat((node, relation), dim=1)
         msg = node + relation
         # calculate the neighbor message with weight_neighbor
